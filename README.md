@@ -24,7 +24,7 @@ cp -r src/* /urbit/path/your-urbit/home/
 
 Now edit the file /urbit/path/your-urbit/home/gen/sms/send.hoon 
 
-Change the ACCOUNT to your Twilio account SID and FROM_NUMBER to the Twilio phone number.
+Change the 'ACCOUNT' to your Twilio account SID and 'FROM_NUMBER' to the Twilio phone number.  Please note these must be enclosed in single quotes, and the FROM_NUMBER needs to be in the form of '+13145554242', with a plus and no dashes.
 
 ### Add auth to the ship
 
