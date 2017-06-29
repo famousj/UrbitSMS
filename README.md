@@ -1,6 +1,5 @@
 # README #
 
-
 ## Installation
 
 ### Get the API setup
@@ -13,7 +12,7 @@ While you're there [get yourself a phone number](https://www.twilio.com/console/
 
 Make sure you have your home desk mounted, as per [the setup instructions](https://urbit.org/docs/using/setup/).
 
-`git clone` all the files for this repo.  
+`git clone` the files for this repo.  
 
 It's not mandatory, but you might consider shutting your urbit down before copying all the files.
 
@@ -57,8 +56,7 @@ Assuming everything went well, you can now send a text, like so:
 :sms|send '+13145554242' 'Here is your text, buddy'
 ```
 
-Please note the single quotes.  Also, Twilio specifies that format for numbers,
-with the plus and no dashes.
+Please note the single quotes.  Also, Twilio specifies that exact format for numbers, with the plus and no dashes.
 
 ### Troubleshooting
 
@@ -72,8 +70,8 @@ This means you need to setup your authentication.
 |init-auth-basic
 ```
 
-If you get a message about "Your AccountSid or AuthToken was incorrect.", then
-apparently you ran `|init-auth-basic` with a bad password. 
+- If you get a message about "Your AccountSid or AuthToken was incorrect.", then apparently you ran `|init-auth-basic` with a bad password. Good news is you
+can run it again.
 
 
 ## J's Dev Notes
@@ -81,22 +79,20 @@ apparently you ran `|init-auth-basic` with a bad password.
 - A quick note before talking about how I got this thing up and running.  If you've read [The Little Schemer](https://mitpress.mit.edu/books/little-schemer), the Sixth Commandment states: "Simplfy only
   after the function is correct".  If you're new to this, my suggestion is: go slowly.  Start with something that already works, some bit of sample code,
   maybe.  Change something small, and make sure it works.  Refactor, make sure you didn't break anything.  Then change something else.
-- The docs are good and improving, but less thorough than one might hope.  If you're reading through source and you're wondering what `epur` is, head over to google and search for `epur site:urbit.org/docs`.  You can find uses in the reference docs and see if it's used in some example code.
-- This can work for glyphs as well, if you know the six-letter encoded version of it. So you're reading some source and you come across `:+` ask Mr. Google
-  for `collus site:urbit.org/docs`, and it'll take you right to it.  Otherwise, you can put the glyph itself in quotes: `":+" site:urbit.org/docs`, which you
-  might have to do on occasion, since sometimes you'll see two characters that aren't a "proper" glyph.
-- For digging through the actual code, ask grep to find it for you.  So if you want to know how `epur` is used in the wild, `cd` into your
-  home directory and run `grep -r epur *`.  (Note: if you're searching for something like `$hiss`, make sure you add a `bas` to it: `"\$hiss"`, otherwise grep
-  will get confused.)
+- The docs are good (and improving), but less thorough than one might hope.  If you're reading through source and you're wondering what `epur` is, head over to google and search for `epur site:urbit.org/docs`.  You can find uses in the reference docs and see if it's used in some example code.
+- This can work for glyphs as well, especially if you know the six-letter encoded version of it. So you're reading some source and you come across `:+` ask Mr. Google for `collus site:urbit.org/docs`, and it'll take you right to it.  
+- Otherwise, you can put the glyph itself in quotes: `":+" site:urbit.org/docs`, which you might have to do on occasion, since sometimes you'll see two characters that aren't a "proper" glyph.
+- For digging through the actual code, ask grep to find it for you.  If you want to know how `epur` is used in the wild, `cd` into your
+  home directory and run `grep -r epur *`.  
+- Although before you get started on something like this, you should really read through [the arvo tutorials](https://urbit.org/docs/arvo/) and make sure you have [the troubleshooting page](https://urbit.org/docs/hoon/troubleshooting/) handy.
 
-## Stuff I Did to Get It Working
+## Stuff I Did to Get It Working - The Long Version
 
-- First thing, we'll need a security driver.  Read through Twilio documentation about their [REST API](https://www.twilio.com/docs/api/rest) to figure out what they're using.
+- There's surprisingly little code here, which you're welcome to peruse.  If you'd like to learn about the process for getting something working, some of my stumbling blocks, and lessons learned, read on!
+- I spent some time familiarizing myself with API by sending some POSTs via curl and Postman and referring to the docs about [sending messages](https://www.twilio.com/docs/api/rest/sending-messages).
+- For the app, first thing we'll need is a security driver.  Read through Twilio documentation about their [REST API](https://www.twilio.com/docs/api/rest) to figure out what they're using.
 - They're using HTTP Basic auth.  So I copied sec/com/github.hoon to sec/com/twilio.hoon.
 - There's really only one thing that needs to change in this file, which is the test URL.  I dug through the documentation to figure out something generic that would work if you're authenticated and fail otherwise.  In this case `+https://api.twilio.com/2010-04-01/Accounts`
-- Then I spent some time familiarizing myself with API by sending some POSTs
-  via curl and Postman and referring to the docs about [sending
-  messages](https://www.twilio.com/docs/api/rest/sending-messages).
 - I tested out sending POSTs to the Twilio REST endpoint from dojo.  This did not work particularly well.  I tried JSON.  Status 400.  I tried sending as a 
 URL-encoded string.  Status 400.  
 - Since it was working in Postman, I looked at what that was sending in the headers.  Turns out I needed to set the content-type to "application/x-www-form-urlencoded".  
@@ -117,9 +113,7 @@ I ended up asking on `:talk`  and got pointed in the right direction.  The `%his
 - Apparently gh.hoon and gmail.hoon were using the mark `%hiss`.  So I had to figure out how a `%hiss` works.
 - Ultimately, I ended up looking at `arvo/zuse.hoon`.  All the code in `arvo` is very clean and streamlined and also somewhat opaque.  It's easy to read once
   you get your head around it, but if you're looking for something to copy/paste to get started, it's not the first place to look.
-- Anyway, in `zuse.hoon` I discover that the moss for hiss is a purl and a moth.  (A moth?)  A `moth` is `{p/meth q/math r/(unit octs)}`.  `meth` is the
-  method.  (Being from Oklahoma, when I read `meth`, I tend to think of something else...)  `math` is "semiparsed headers".  And the body apparently gets
-  shunted into a `(unit octs)`.
+- Anyway, in `zuse.hoon` I discover that the moss for hiss is a purl and a moth.  (A moth?)  A `moth` is `{p/meth q/math r/(unit octs)}`.  `meth` is the method, in this case `%post`.  (Being from Oklahoma, when I read `meth`, I tend to think of something else...)  `math` is "semiparsed headers".  And the body apparently gets shunted into a `(unit octs)`.
 - The good news here is that I could now grep for `math` and see where that's being used.  This sent me back to app/gmail.hoon, where it constructs a `moth`.  in `poke-gmail-req`.  So I copied that over to text.hoon, and set about getting it to work.
 - Again the copy-pasted moss for up.hoon was assuming we'd send a GET request, which only needs a `$purl`.  `nest-fail`.  Once I changed the mark for the cage to `$hiss`, things started working just fine.  The post went through, my phone received a text, and again I ran around the room high-fiving strangers and kissing babies.
 - (Alternately, I could have increased the genericity of the moss, so it's just expecting a `$cage`, but decided to keep things specific and let the compiler know if I've screwed up anything.  This is the eternal tradeoff of functional programming, between keeping things defined specifically and working through spurious failures or making things generic and dealing with types you weren't expecting.  Usually best to err toward being more specific.)
@@ -142,14 +136,4 @@ I ended up asking on `:talk`  and got pointed in the right direction.  The `%his
   with them, we'd need an API connector with a webhook setup.
 - Once that's setup, we can read the account number and the phone number from within the account info, and won't need to pass that into the app directly
   (necessarily).  Although asking people to hack one file isn't exactly the Spanish Inquisition, but still.
-
-## Notes
-
-- Development is slow and somewhat painful.  The reason, I've decided, is the feedback loops are very long.  This is probably a lack of experience and the overall weirdness of the system/language/etc.
-- For instance, when I was trying to do a POST from the command line, it occurred to me that I might need to be passing in a JSON object, not just a string `%s` as the [docs were doing](https://urbit.org/docs/using/shell/).
-However, testing this theory took a very long time, digging through docs to find the right standard library command to convert from text JSON to urbit-ified JSON.  
-I got that to build, but got a `nest-fail`, because I needed to pass that through `need`, because I was getting back a `unit`. (Which is not to be confused with Unit in scala, which is what I write code in during my day job.)
-Having gone through all that, it posted to Twilio and... didn't work. 400.
-This is fine, and to some extent this is how all development works.  It's just each of these steps might take an hour of eading and trying stuff out.
-
 
