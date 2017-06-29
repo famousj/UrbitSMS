@@ -12,7 +12,7 @@ While you're there [get yourself a phone number](https://www.twilio.com/console/
 
 Make sure you have your home desk mounted, as per [the setup instructions](https://urbit.org/docs/using/setup/).
 
-`git clone` the files for this repo.  
+`git clone` this repo.
 
 It's not mandatory, but you might consider shutting your urbit down before copying all the files.
 
@@ -28,7 +28,7 @@ Change the ACCOUNT to your Twilio account SID and FROM_NUMBER to the Twilio phon
 
 ### Add auth to the ship
 
-On your ship run this:
+On your ship, run this:
 ```
 |init-auth-basic
 ```
