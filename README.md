@@ -86,7 +86,7 @@ can run it again.
   home directory and run `grep -r epur *`.  
 - Although before you get started on something like this, you should really read through [the arvo tutorials](https://urbit.org/docs/arvo/) and make sure you have [the troubleshooting page](https://urbit.org/docs/hoon/troubleshooting/) handy.
 
-## Stuff I Did to Get It Working - The Long Version
+## Stuff I Did to Get It Working
 
 - There's surprisingly little code here, which you're welcome to peruse.  If you'd like to learn about the process for getting something working, some of my stumbling blocks, and lessons learned, read on!
 - I spent some time familiarizing myself with API by sending some POSTs via curl and Postman and referring to the docs about [sending messages](https://www.twilio.com/docs/api/rest/sending-messages).
