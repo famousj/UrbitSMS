@@ -9,24 +9,6 @@
 
 While you're there [get yourself a phone number](https://www.twilio.com/console/phone-numbers/incoming)
 
-### Add auth to the ship
-
-On your ship run this:
-```
-|init-auth-basic
-```
-
-The URL is `api.twilio.com`
-The username is the Account SID you can find in [the account console dashboard](https://www.twilio.com/user/account)
-The password is the Account Token.
-
-In the dojo, run this:
-```
-+https://api.twilio.com/2010-04-01/Accounts
-```
-
-Make sure this works and doesn't give you an error.
-
 ### Copy the app files
 
 Make sure you have your home desk mounted, as per [the setup instructions](https://urbit.org/docs/using/setup/).
@@ -44,6 +26,24 @@ cp -r src/* /urbit/path/your-urbit/home/
 Now edit the file /urbit/path/your-urbit/home/gen/sms/send.hoon 
 
 Change the ACCOUNT to your Twilio account SID and FROM_NUMBER to the Twilio phone number.
+
+### Add auth to the ship
+
+On your ship run this:
+```
+|init-auth-basic
+```
+
+The URL is `api.twilio.com`
+The username is the Account SID you can find in [the account console dashboard](https://www.twilio.com/user/account)
+The password is the Account Token.
+
+In the dojo, run this:
+```
++https://api.twilio.com/2010-04-01/Accounts
+```
+
+Make sure this works and doesn't give you an error.
 
 ### Fire it up!
 
