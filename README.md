@@ -33,7 +33,7 @@ On your ship, run this:
 |init-auth-basic
 ```
 
-The URL is `api.twilio.com`  
+The API hostname is `api.twilio.com`  
 The username is the Account SID you can find in [the account console dashboard](https://www.twilio.com/user/account)  
 The password is the Account Token.
 
