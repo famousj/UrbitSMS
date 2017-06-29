@@ -44,7 +44,6 @@
   ?:  =(code 201)
     ~&  [%text-sent message]
     [~ +>.$]
-  :: TODO: Handle error with authentication.
   ~&  [%we-had-a-problem code]
   ~&  [%headers headers]
   ~&  [%body body]
