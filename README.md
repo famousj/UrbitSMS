@@ -34,8 +34,8 @@ On your ship run this:
 |init-auth-basic
 ```
 
-The URL is `api.twilio.com`
-The username is the Account SID you can find in [the account console dashboard](https://www.twilio.com/user/account)
+The URL is `api.twilio.com`  
+The username is the Account SID you can find in [the account console dashboard](https://www.twilio.com/user/account)  
 The password is the Account Token.
 
 In the dojo, run this:
@@ -147,13 +147,9 @@ I ended up asking on `:talk`  and got pointed in the right direction.  The `%his
 
 - Development is slow and somewhat painful.  The reason, I've decided, is the feedback loops are very long.  This is probably a lack of experience and the overall weirdness of the system/language/etc.
 - For instance, when I was trying to do a POST from the command line, it occurred to me that I might need to be passing in a JSON object, not just a string `%s` as the [docs were doing](https://urbit.org/docs/using/shell/).
-
 However, testing this theory took a very long time, digging through docs to find the right standard library command to convert from text JSON to urbit-ified JSON.  
-
 I got that to build, but got a `nest-fail`, because I needed to pass that through `need`, because I was getting back a `unit`. (Which is not to be confused with Unit in scala, which is what I write code in during my day job.)
-
 Having gone through all that, it posted to Twilio and... didn't work. 400.
-
 This is fine, and to some extent this is how all development works.  It's just each of these steps might take an hour of eading and trying stuff out.
 
 
