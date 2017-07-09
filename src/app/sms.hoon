@@ -19,10 +19,20 @@
 ++  sms-url  |=  {acct/cord}  ^-  cord
     (crip "https://api.twilio.com/2010-04-01/Accounts/{(trip acct)}/Messages.json")
 --
-|_  {hid/bowl message/@t}
-++  poke-sms
-  |=  {acct/@t from/@t to/@t msg/@t}  ^-  (quip move +>)
+|_  {hid/bowl acct/@t from/@t message/@t}
+++  poke-sms-acct
+  |=  acct/@t  ^-  (quip move +>)
+  ~&  [%set-acct acct]
+  [~ +>.$(acct acct)]
+++  poke-sms-number
+  |=  num/@t  ^-  (quip move +>)
+  ~&  [%set-from num]
+  [~ +>.$(from num)]
+++  poke-sms-msg
+  |=  {$~ to/@t txt/@t}  ^-  (quip move +>)
   :-  :_  ~
+      :: TODO Make sure we've setup the account before we try to set the 
+      :: URL
       =+  pul=`purl`(need (epur (sms-url acct)))
       =+  maf=`math`(malt ~[content-type+['application/x-www-form-urlencoded']~]) 
       :*  ost.hid  %hiss  /request  `~  %httr  %hiss  pul
@@ -34,17 +44,16 @@
               %-  tail:earn
                   :~  'To'^to
                       'From'^from
-                      'Body'^msg
+                      'Body'^txt
                   ==
       ==
-    +>.$(message msg)
+    +>.$(message txt)
 ++  sigh-httr
   |=  {wir/wire code/@ud headers/mess body/(unit octs)}
   ^-  {(list move) _+>.$}
   ?:  =(code 201)
     ~&  [%text-sent message]
     [~ +>.$]
-  :: TODO: Handle error with authentication.
   ~&  [%we-had-a-problem code]
   ~&  [%headers headers]
   ~&  [%body body]

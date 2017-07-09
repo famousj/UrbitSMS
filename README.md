@@ -39,24 +39,39 @@ The password is the Account Token.
 
 In the dojo, run this:
 ```
-+https://api.twilio.com/2010-04-01/Accounts
++https://api.twilio.com/2010-04-01/Accounts.json
 ```
 
 Make sure this works and doesn't give you an error.
 
 ### Fire it up!
 
-Run this:
+Now start the app:
 ```
 |start %sms
 ```
 
-Assuming everything went well, you can now send a text, like so:
+Configure the app for your Twilio account.  Of course you should use your
+Account SID and your Twilio phone number:
+```
+:sms|set-acct 'AC2222222'
+:sms|set-number '+13145557766'
+```
+
+Please note the single quotes.  Also, Twilio specifies that exact format for numbers, with the plus and no dashes.
+
+Assuming everything went well, you should now be able to send a text, like so:
 ```
 :sms|send '+13145554242' 'Here is your text, buddy'
 ```
 
-Please note the single quotes.  Also, Twilio specifies that exact format for numbers, with the plus and no dashes.
+### Receiving Texts
+
+Okay, now that you're sending texts, let's set us up for receiving texts.
+
+https://www.twilio.com/console/phone-numbers/incoming
+
+
 
 ### Troubleshooting
 
@@ -84,6 +99,15 @@ can run it again.
 - Otherwise, you can put the glyph itself in quotes: `":+" site:urbit.org/docs`, which you might have to do on occasion, since sometimes you'll see two characters that aren't a "proper" glyph.
 - For digging through the actual code, ask grep to find it for you.  If you want to know how `epur` is used in the wild, `cd` into your
   home directory and run `grep -r epur *`.  
+- Also, save yourself a lot of time before you get started by learning the
+  following:
+    - There are two kinds of "strings".  There's a `cord`, which is a string
+      constant, and there's a `tape`, which is a string as a list of
+      characters.  Tapes can do string interpolation and parsing.  Cords can't. 
+    - If you want to make a cord, use `soq`s, i.e. single quotes.  If you want 
+      a tape, use `doq`s, i.e. double quotes.
+    - I'd say over 50% of my `nest-fail` errors stemmed from not having figured
+      this out sooner.
 - Although before you get started on something like this, you should really read through [the arvo tutorials](https://urbit.org/docs/arvo/) and make sure you have [the troubleshooting page](https://urbit.org/docs/hoon/troubleshooting/) handy.
 
 ## Stuff I Did to Get It Working
@@ -129,6 +153,43 @@ I ended up asking on `:talk`  and got pointed in the right direction.  The `%his
 - Twilio forces you to use the account number as part of the SMS sending URL.  Since I don't want to commit my Twilio account info to github, I added that as a part of the SMS mark.  Then, in another "should have done this sooner", I added the account and the "from" phone number  to the generator, since they're really unlikely to change for me (or anyone else using this for that matter).  So now I only have to provide the "to" number and the message.  
 - And at this point, it's pretty much usable as-is, other than the bit of editing you'd need to do on the generator.
 - Time to publish to github, cleanup this doc, and let people know what's up.
+
+### Part II - The API Connector
+
+- Creating an API connector was a bit tough getting starting.  The docs for Twilio are organized
+  topically, which is good if you're oriented towards a task, like, "I want to
+  receive a call from my web service, how do I do that?"  If you're more
+  wondering, "What all data does Twilio expose that I might find useful?"
+- As it happens, I already had this.  The "Account Info" page, i.e. `https://api.twilio.com/2010-04-01/Accounts.json`, lists "subresource_uris".  As it happens, I had never really looked at the contents.  I just saw, "Oh, hey!  I'm logged in now!" and stopped reading.
+- As a first pass, I tried getting the list of Messages working i.e. `https://api.twilio.com/2010-04-01/Accounts/{account-id}/Messages.json`.  This is the same URL as we use to send a message, only with a GET.  This would be a quick-and-somewhat-dirty way of listening for responses.  Webhooks would certainly be more responsive, but this can get us up and running.
+- (NOTE: running this get from the dojo with +https://... was a poor choice.  I
+  was worried I'd crashed my ship for a moment.)
+- Actually, the first thing I need to do is build up the API tree, sarting with
+  `/` directory.
+- I added a `++place` for accounts, which is the next level up.  It occurs to
+  me that we don't actually need the `++place`s to mirror the Twilio REST
+  structure, but I suspect this will make life easier.
+- I got a `peek slam fail` for accounts.  I googled the docs and skimmed the `ford` reference.  We have `slam`, `slap`, `maul`, `maim`.  This Urbit is a very violent system.
+- Okay, quick rewind here.  I should first make sure the `gh` app is working.
+  Let me connect to that...
+- Well, that's something.  Getting the same `peek slam fail` for `gh`.
+
+- Spun my tires for a while trying to get the `gh` app running, or at least
+  figure out why it's getting the odd `peek slam fail`.  There are many
+  moving parts to this app, most of which I don't understand.  And looking at
+  the [repo for arvo](https://github.com/urbit/arvo), it would seem there's a
+  new version coming soon.  Thus, time to pivot...
+
+- As a revised first pass, I've decided to add some kind of polling system to the sms app that's already written.  Thus I'll read messages from `Messages.json` and write them to `clay`, if we've had any changes.  
+
+- (Note to self: Make sure this exact thing hasn't already been done.  Seems like mirroring a webpage would be a fairly common use-case)
+
+- In preparation for this, I refactored the app.  I made a pair of marks for the account and a phone number, and a matching pair of generators to set these within the app, and updated the app to make these part of its state.
+- Updated the setup above so that you run the generators to set your account
+  and your "from" phone number.
+- I like this solution much better than editing the generator.  Instead of editing files, the only native Unix you have to do is copy files.  After that, it all happens on your ship.
+
+- (Note to self: There's actually a way to do this entirely natively, not even copying files.  Something to do with making a desk and letting people sync from it.  I'd still want to have my files mirrored on github, on the off chance someone fixes something and wants to do a pull-request.)
 
 ## Up next
 

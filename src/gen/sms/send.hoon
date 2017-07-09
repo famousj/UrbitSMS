@@ -5,4 +5,4 @@
 /?    310
 :-  %say
 |=  {^ {to/@t message/@t $~} $~}
-[%sms ACCOUNT FROM_NUMBER to message]
+[%sms-msg ~ to message]
