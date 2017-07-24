@@ -1,5 +1,5 @@
 ::  Send a text via Twilio
-::  Details KM
+::  
 :::: /hoon/sms/app
   ::
 /?   310
