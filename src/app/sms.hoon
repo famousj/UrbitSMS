@@ -7,19 +7,27 @@
 ++  move  {bone card}
 ++  card
   $%  {$hiss wire unit-iden/{$~ $~} mark/$httr cage/{mark/$hiss vase/hiss}}
-      {$wait wire @da}
+      {$hiss wire unit-iden/{$~ $~} mark/$httr cage/{mark/$purl vase/purl}}
   ==
-++  action
-  $%  {$on $~}
-      {$off $~}
-      {$target p/cord}
+++  command
+  $?  $log   :: Show the message log
   ==
 --
 |%
-++  sms-url  |=  {acct/cord}  ^-  cord
-    (crip "https://api.twilio.com/2010-04-01/Accounts/{(trip acct)}/Messages.json")
+++  sms-msg-wire  ^-  wir/wire  /sms-msg
+++  log-wire  ^-  wir/wire  /sms-log
+++  url-prefix  |=  {acct/cord}  ^-  tape
+    "https://api.twilio.com/2010-04-01/Accounts/{(trip acct)}/"
+++  sms-url  |=  {acct/cord}  ^-  purl
+  (need (epur (crip (weld (url-prefix acct) "Messages.json"))))
+++  msg-from-body
+    |=  {body/(unit octs)}  ^-  cord
+    =+  jon=(need (poja q:(need body)))
+    =+  obj=(need ((om:jo some) jon))
+    =+  bod=(~(got by obj) 'body')
+    (need (so:jo bod))
 --
-|_  {hid/bowl acct/@t from/@t message/@t}
+|_  {hid/bowl acct/@t from/@t}
 ++  poke-sms-acct
   |=  acct/@t  ^-  (quip move +>)
   ~&  [%set-acct acct]
@@ -30,33 +38,50 @@
   [~ +>.$(from num)]
 ++  poke-sms-msg
   |=  {$~ to/@t txt/@t}  ^-  (quip move +>)
+  :: TODO Make sure we've setup the account before we try to set the 
+  :: URL
+  =+  ^=  header  ^-  math
+      %-  malt 
+      ~[content-type+['application/x-www-form-urlencoded']~] 
   :-  :_  ~
-      :: TODO Make sure we've setup the account before we try to set the 
-      :: URL
-      =+  pul=`purl`(need (epur (sms-url acct)))
-      =+  maf=`math`(malt ~[content-type+['application/x-www-form-urlencoded']~]) 
-      :*  ost.hid  %hiss  /request  `~  %httr  %hiss  pul
-              :+  %post
-                maf
-              :: encode the body as though it's a query and drop the first
-              :: char, i.e. the ?
-              %-  some  %-  tact  %+  slag  1
-              %-  tail:earn
-                  :~  'To'^to
-                      'From'^from
-                      'Body'^txt
-                  ==
+      :*  ost.hid  %hiss  sms-msg-wire  `~  %httr  %hiss  (sms-url acct)
+          :+  %post
+             header
+          :: encode the body as though it's a query and drop the first
+          :: char, i.e. the ?
+          %-  some  %-  tact  %+  slag  1
+          %-  tail:earn
+              :~  'To'^to
+                  'From'^from
+                  'Body'^txt
+              ==
       ==
-    +>.$(message txt)
-++  sigh-httr
-  |=  {wir/wire code/@ud headers/mess body/(unit octs)}
-  ^-  {(list move) _+>.$}
+  +>.$
+++  poke-atom
+  |=  cmd/@t  ^-  (quip move +>)
+  ~&  [%cmdatom cmd]  
+  =+  purl=`purl`(sms-url acct)
+  ~!  purl
+  =+  move=`move`[ost.hid %hiss /log `~ %httr %purl purl]
+  [[move ~] +>.$]
+++  sigh-sms-msg
+  |=  {code/@ud headers/mess body/(unit octs)}
+  ^-  (quip move +>)
   ?:  =(code 201)
-    ~&  [%text-sent message]
+    ~&  [%text-sent (msg-from-body body)]
     [~ +>.$]
   ~&  [%we-had-a-problem code]
   ~&  [%headers headers]
   ~&  [%body body]
   [~ +>.$]
-++  prep  _`.  :: computed when the source file changes;
---             
+++  sigh-httr
+  |=  {wir/wire code/@ud headers/mess body/(unit octs)}
+  ^-  (quip move +>)
+  ?:  =(wir sms-msg-wire)  
+    (sigh-sms-msg code headers body)
+  ~&  [%code code]
+  ~&  [%headers headers]
+  ~&  [%body body]
+  [~ +>.$]
+::  ++  prep  _`.  :: computed when the source file changes;
+--
