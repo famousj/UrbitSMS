@@ -6,8 +6,8 @@
 |%  
 ++  move  {bone card}
 ++  card
-  $%  {$hiss wire unit-iden/{$~ $~} mark/$httr cage/{mark/$hiss vase/hiss}}
-      {$hiss wire unit-iden/{$~ $~} mark/$httr cage/{mark/$purl vase/purl}}
+  $%  {$hiss wire unit-iden/{$~ $~} mark/$httr cage/{mark/$hiss vase/$hiss}}
+      {$hiss wire unit-iden/{$~ $~} mark/$httr cage/{mark/$purl vase/$purl}}
   ==
 ++  command
   $?  $log   :: Show the message log
@@ -22,22 +22,22 @@
   (need (epur (crip (weld (url-prefix acct) "Messages.json"))))
 ++  msg-from-body
     |=  {body/(unit octs)}  ^-  cord
-    =+  jon=(need (poja q:(need body)))
-    =+  obj=(need ((om:jo some) jon))
+    =+  jon=(need (de-json:html q:(need body)))
+    =+  obj=(need ((dejs-soft:format some) jon))
     =+  bod=(~(got by obj) 'body')
     (need (so:jo bod))
 --
 |_  {hid/bowl acct/@t from/@t}
 ++  poke-sms-acct
-  |=  acct/@t  ^-  (quip move +>)
+  |=  acct/@t  ^-  (quip move _+>)
   ~&  [%set-acct acct]
   [~ +>.$(acct acct)]
 ++  poke-sms-number
-  |=  num/@t  ^-  (quip move +>)
+  |=  num/@t  ^-  (quip move _+>)
   ~&  [%set-from num]
   [~ +>.$(from num)]
 ++  poke-sms-msg
-  |=  {$~ to/@t txt/@t}  ^-  (quip move +>)
+  |=  {$~ to/@t txt/@t}  ^-  (quip move _+>)
   :: TODO Make sure we've setup the account before we try to set the 
   :: URL
   =+  ^=  header  ^-  math
@@ -58,7 +58,7 @@
       ==
   +>.$
 ++  poke-atom
-  |=  cmd/@t  ^-  (quip move +>)
+  |=  cmd/@t  ^-  (quip move _+>)
   ~&  [%cmdatom cmd]  
   =+  purl=`purl`(sms-url acct)
   ~!  purl
@@ -66,7 +66,7 @@
   [[move ~] +>.$]
 ++  sigh-sms-msg
   |=  {code/@ud headers/mess body/(unit octs)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ?:  =(code 201)
     ~&  [%text-sent (msg-from-body body)]
     [~ +>.$]
@@ -76,7 +76,7 @@
   [~ +>.$]
 ++  sigh-httr
   |=  {wir/wire code/@ud headers/mess body/(unit octs)}
-  ^-  (quip move +>)
+  ^-  (quip move _+>)
   ?:  =(wir sms-msg-wire)  
     (sigh-sms-msg code headers body)
   ~&  [%code code]

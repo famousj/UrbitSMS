@@ -29,7 +29,7 @@ On your ship, run this:
 |init-auth-basic
 ```
 
-The API hostname is `api.twilio.com`  
+The URL is `api.twilio.com`  
 The username is the Account SID you can find in [the account console dashboard](https://www.twilio.com/user/account)  
 The password is the Account Token.
 
@@ -244,6 +244,36 @@ I ended up asking on `:talk`  and got pointed in the right direction.  The `%his
 ::  ++  prep  _`.  :: computed when the source file changes;
 ```
 
+- Well, as fun as all that was, it would seem I'll need something more heavy-duty if I'm going to be reading and writing a lot from the twilio API.  As such,
+  I made a `sur` (which I believe is called a `surface`) for Twilio.  This is a file containing a core containing a mold for the data we get back from the
+  Twilio API.
+
+- Side note: if you want to use the surface, you need to import it with a `/-`.
+```
+/-  twilio
+```
+
+- Wait!  I just realized something.  All this time I've been thinking of `mold` as something that grows on stale bread.  (This is probably because of the use
+  of the word "moldy")  However, what it probably refers to is "mold" like "here's a mold for a plastic dinosaur".  Like "injection mold".  Man, this makes
+  way more sense.
+
+- And for this, actually Postman is a better guide than the docs.  The actual API's
+  JSON uses snake_case, whereas the docs would lead me to believe they were using some
+  variety of CamelCase.
+
+- KM: Something about how `ot` works, and guesswork on what we should be passing for
+  the `++fist`
+
+
+## Much time passes...
+
+- So what's new with Hoon?  Let's try loading the app and seeing what happens.
+
+- Addresses now seem to require a cab.  So instead of `+>`, we need `_+>`.  I should look up why the change, but not right now.
+
+- Also, apparently there are `buc`s I need for things that didn't need them (for some reason).
+
+- And `poja` might be missing...  Dang, a whole lot of things missing!  Fortunately, we have lib/oldzuse.hoon which shows some mappings.
 
 ## Up next
 
@@ -251,4 +281,6 @@ I ended up asking on `:talk`  and got pointed in the right direction.  The `%his
   with them, we'd need an API connector with a webhook setup.
 - Once that's setup, we can read the account number and the phone number from within the account info, and won't need to pass that into the app directly
   (necessarily).  Although asking people to hack one file isn't exactly the Spanish Inquisition, but still.
+
+
 
